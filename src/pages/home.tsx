@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import chroma from "chroma-js";
 import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { generateShades } from "../utils-temp";
 
 const UnstyledInput = forwardRef<InputProps, "input">((props, ref) => (
@@ -27,7 +28,13 @@ const UnstyledInput = forwardRef<InputProps, "input">((props, ref) => (
 ));
 
 export function HomePage() {
-  const [baseColor, setColor] = useState("#9AE6B4");
+  const { color } = useParams();
+
+  const nac = useNavigate();
+
+  const [baseColor, setColor] = useState(() => {
+    return color ? "#" + color : "#9AE6B4";
+  });
 
   const [hexColor, setHexColor] = useState(baseColor.replace("#", ""));
 
@@ -81,6 +88,8 @@ export function HomePage() {
       y: Math.ceil(y * 100),
       k: Math.ceil(k * 100),
     });
+
+    nac(s.replace("#", ""), { replace: true });
   };
 
   const handleHexChange = (hex: string) => {
@@ -101,6 +110,8 @@ export function HomePage() {
         y: Math.ceil(y * 100),
         k: Math.ceil(k * 100),
       });
+
+      nac(v, { replace: true });
     }
   };
 
@@ -126,6 +137,8 @@ export function HomePage() {
       g,
       b,
     });
+
+    nac(s.replace("#", ""), { replace: true });
   };
 
   return (
