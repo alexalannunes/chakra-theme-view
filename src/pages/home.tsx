@@ -9,6 +9,10 @@ import {
   Input,
   InputProps,
   Link,
+  RangeSlider,
+  RangeSliderFilledTrack,
+  RangeSliderThumb,
+  RangeSliderTrack,
   Text,
   forwardRef,
 } from "@chakra-ui/react";
@@ -31,6 +35,8 @@ export function HomePage() {
   const { color } = useParams();
 
   const nac = useNavigate();
+
+  const [shadesCount, setShadesCount] = useState([24]);
 
   const [baseColor, setColor] = useState(() => {
     return color ? "#" + color : "#9AE6B4";
@@ -89,7 +95,7 @@ export function HomePage() {
       k: Math.ceil(k * 100),
     });
 
-    nac(s.replace("#", ""), { replace: true });
+    nac(s.replace("#", "").toLowerCase(), { replace: true });
   };
 
   const handleHexChange = (hex: string) => {
@@ -111,7 +117,7 @@ export function HomePage() {
         k: Math.ceil(k * 100),
       });
 
-      nac(v, { replace: true });
+      nac(v.toLowerCase(), { replace: true });
     }
   };
 
@@ -138,7 +144,7 @@ export function HomePage() {
       b,
     });
 
-    nac(s.replace("#", ""), { replace: true });
+    nac(s.replace("#", "").toLowerCase(), { replace: true });
   };
 
   return (
@@ -267,18 +273,44 @@ export function HomePage() {
             </Flex>
           </Box>
 
-          <Box w={800} mx={"auto"} mt={10} mb={4}>
+          <Flex
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            w={800}
+            mx={"auto"}
+            mt={10}
+            mb={4}
+          >
             <Heading size={"md"}>Shades</Heading>
-          </Box>
+            <Box w={96}>
+              <RangeSlider
+                max={50}
+                min={2}
+                onChange={(value) => {
+                  setShadesCount(value);
+                }}
+                value={shadesCount}
+              >
+                <RangeSliderTrack bg="gray.100">
+                  <RangeSliderFilledTrack bg="gray.300" />
+                </RangeSliderTrack>
+                <RangeSliderThumb boxSize={6} index={0}>
+                  <Text fontSize={"small"} fontWeight={"semibold"}>
+                    {shadesCount}
+                  </Text>
+                </RangeSliderThumb>
+              </RangeSlider>
+            </Box>
+          </Flex>
           <Flex flexWrap={"wrap"} mt={4} w={830} mx={"auto"}>
-            {generateShades(baseColor, 24).map((shade, index) => (
+            {generateShades(baseColor, shadesCount[0]).map((shade, index) => (
               <Box
-                key={shade + "-" + index}
-                h={108}
-                width={108}
-                m={15}
                 bg={shade}
+                h={108}
+                key={shade + "-" + index}
+                m={15}
                 rounded={"12px"}
+                width={108}
               />
             ))}
           </Flex>
