@@ -195,7 +195,7 @@ export function HomePage() {
           </Flex>
           <Flex flexWrap={"wrap"} mt={4} w={830} mx={"auto"}>
             {generateShades(baseColor, shadesCount[0]).map((shade, index) => (
-              <ColorBox color={shade} index={index} />
+              <ColorBox color={shade} key={color + "-" + index} />
             ))}
           </Flex>
         </Container>
