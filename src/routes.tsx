@@ -7,7 +7,7 @@ const router = createBrowserRouter([
     element: <HomePage />,
     children: [
       {
-        path: ":color",
+        path: ":colorShades",
         element: <HomePage />,
       },
     ],
