@@ -5,21 +5,16 @@ import {
   HStack,
   Heading,
   Link,
-  RangeSlider,
-  RangeSliderFilledTrack,
-  RangeSliderThumb,
-  RangeSliderTrack,
   Text,
 } from "@chakra-ui/react";
 import chroma from "chroma-js";
 import { useState } from "react";
-import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDebouncedCallback } from "use-debounce";
 
-import { CmykField } from "../features/color-manager/cmyk-field";
-import { CopyColorButton } from "../features/color-manager/copy-color-button";
-import { HexField } from "../features/color-manager/hex-field";
-import { RgbField } from "../features/color-manager/rgb-fiel";
+import { BoxColorFields } from "../features/color-manager/box-color-fields";
+import { ColorBox } from "../features/color-manager/color-box";
+import { ShadesRange } from "../features/color-manager/shades-range";
 import { generateShades } from "../utils-temp";
 
 const navigateOptions = {
@@ -174,28 +169,15 @@ export function HomePage() {
           </HStack>
         </Flex>
         <Container mt={10} maxW={"container.lg"} p={0}>
-          <Box
-            rounded={"12px"}
-            style={{
-              background: baseColor,
-            }}
-            width={800}
-            mx={"auto"}
-            p={4}
-          >
-            <Flex justifyContent={"space-between"} alignItems={"center"}>
-              <HStack>
-                <HexField hexColor={hexColor} onHexChange={handleHexChange} />
-
-                <RgbField rgbColor={rgbColor} onRgbChange={handleRgbChange} />
-
-                <CmykField
-                  cmykColor={cmykColor}
-                  onCmykChange={handleCmykChange}
-                />
-              </HStack>
-            </Flex>
-          </Box>
+          <BoxColorFields
+            baseColor={baseColor}
+            cmykColor={cmykColor}
+            hexColor={hexColor}
+            onCmykChange={handleCmykChange}
+            onHexChange={handleHexChange}
+            onRgbChange={handleRgbChange}
+            rgbColor={rgbColor}
+          />
 
           <Flex
             justifyContent={"space-between"}
@@ -206,53 +188,14 @@ export function HomePage() {
             mb={4}
           >
             <Heading size={"md"}>Shades</Heading>
-            <Box w={96}>
-              <RangeSlider
-                max={50}
-                min={2}
-                onChange={handleShadesCountChange}
-                value={shadesCount}
-              >
-                <RangeSliderTrack bg="gray.100">
-                  <RangeSliderFilledTrack bg="gray.300" />
-                </RangeSliderTrack>
-                <RangeSliderThumb boxSize={6} index={0}>
-                  <Text fontSize={"small"} fontWeight={"semibold"}>
-                    {shadesCount}
-                  </Text>
-                </RangeSliderThumb>
-              </RangeSlider>
-            </Box>
+            <ShadesRange
+              count={shadesCount}
+              onShadesCountChange={handleShadesCountChange}
+            />
           </Flex>
           <Flex flexWrap={"wrap"} mt={4} w={830} mx={"auto"}>
             {generateShades(baseColor, shadesCount[0]).map((shade, index) => (
-              <Link
-                as={RouterLink}
-                key={shade + "-" + index}
-                to={`color/${shade.replace("#", "")}`}
-              >
-                <Flex
-                  bg={shade}
-                  h={108}
-                  m={15}
-                  rounded={"12px"}
-                  width={108}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  sx={{
-                    "&:hover": {
-                      button: {
-                        display: "flex",
-                        "&:active": {
-                          transform: "scale(0.9)",
-                        },
-                      },
-                    },
-                  }}
-                >
-                  <CopyColorButton color={shade} />
-                </Flex>
-              </Link>
+              <ColorBox color={shade} index={index} />
             ))}
           </Flex>
         </Container>
