@@ -2,41 +2,41 @@ import {
   Box,
   Container,
   Flex,
-  FormControl,
-  FormLabel,
   HStack,
   Heading,
-  Input,
-  InputProps,
   Link,
   RangeSlider,
   RangeSliderFilledTrack,
   RangeSliderThumb,
   RangeSliderTrack,
   Text,
-  forwardRef,
 } from "@chakra-ui/react";
 import chroma from "chroma-js";
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
+import { useDebouncedCallback } from "use-debounce";
+
+import { CmykField } from "../features/color-manager/cmyk-field";
+import { CopyColorButton } from "../features/color-manager/copy-color-button";
+import { HexField } from "../features/color-manager/hex-field";
+import { RgbField } from "../features/color-manager/rgb-fiel";
 import { generateShades } from "../utils-temp";
 
-const UnstyledInput = forwardRef<InputProps, "input">((props, ref) => (
-  <Input
-    fontWeight={"semibold"}
-    variant={"unstyled"}
-    size={"small"}
-    ref={ref}
-    {...props}
-  />
-));
+const navigateOptions = {
+  replace: true,
+};
 
 export function HomePage() {
-  const { color } = useParams();
+  const { colorShades } = useParams();
 
-  const nac = useNavigate();
+  const [color, shades] = (colorShades || "").split("-");
 
-  const [shadesCount, setShadesCount] = useState([24]);
+  // use function to update url with debounce callback
+  const navigate = useNavigate();
+
+  const [shadesCount, setShadesCount] = useState(() => {
+    return shades ? [Number(shades)] : [24];
+  });
 
   const [baseColor, setColor] = useState(() => {
     return color ? "#" + color : "#9AE6B4";
@@ -58,18 +58,6 @@ export function HomePage() {
       k: Math.ceil(k * 100),
     };
   });
-
-  const { r, g, b } = rgbColor;
-  const { c, m, y, k } = cmykColor;
-
-  const rs = r.toString().length + "ch";
-  const gs = g.toString().length + "ch";
-  const bs = b.toString().length + "ch";
-
-  const cs = c.toString().length + "ch";
-  const ms = m.toString().length + "ch";
-  const ys = y.toString().length + "ch";
-  const ks = k.toString().length + "ch";
 
   const handleRgbChange = (rgbValue: number, key: string) => {
     if (isNaN(rgbValue)) return;
@@ -95,7 +83,10 @@ export function HomePage() {
       k: Math.ceil(k * 100),
     });
 
-    nac(s.replace("#", "").toLowerCase(), { replace: true });
+    navigate(
+      s.replace("#", "").toLowerCase() + "-" + shadesCount[0],
+      navigateOptions
+    );
   };
 
   const handleHexChange = (hex: string) => {
@@ -117,7 +108,7 @@ export function HomePage() {
         k: Math.ceil(k * 100),
       });
 
-      nac(v.toLowerCase(), { replace: true });
+      navigate(v.toLowerCase() + "-" + shadesCount[0], navigateOptions);
     }
   };
 
@@ -144,7 +135,23 @@ export function HomePage() {
       b,
     });
 
-    nac(s.replace("#", "").toLowerCase(), { replace: true });
+    navigate(
+      s.replace("#", "").toLowerCase() + "-" + shadesCount[0],
+      navigateOptions
+    );
+  };
+
+  // TODO: receive color and shade count to update url
+  const updateUrlShadesCount = useDebouncedCallback((value: number) => {
+    const newColor = color?.replace("#", "").toLowerCase();
+    const url = `${newColor}-${value}`;
+
+    navigate(url, navigateOptions);
+  }, 800);
+
+  const handleShadesCountChange = (value: number[]) => {
+    setShadesCount(value);
+    updateUrlShadesCount(value[0]);
   };
 
   return (
@@ -178,97 +185,14 @@ export function HomePage() {
           >
             <Flex justifyContent={"space-between"} alignItems={"center"}>
               <HStack>
-                <FormControl w={40}>
-                  <FormLabel fontSize={"small"} color={"gray.500"}>
-                    HEX
-                  </FormLabel>
-                  <UnstyledInput
-                    value={"#" + hexColor.toUpperCase()}
-                    onChange={(e) => handleHexChange(e.target.value)}
-                    maxLength={7}
-                  />
-                </FormControl>
+                <HexField hexColor={hexColor} onHexChange={handleHexChange} />
 
-                <FormControl w={40}>
-                  <FormLabel fontSize={"small"} color={"gray.500"}>
-                    RGB
-                  </FormLabel>
-                  <Flex>
-                    <UnstyledInput
-                      value={rgbColor.r}
-                      onChange={(e) =>
-                        handleRgbChange(Number(e.target.value), "r")
-                      }
-                      w={rs}
-                    />
-                    <Text>,</Text>
-                    <UnstyledInput
-                      id="rgba-color-g"
-                      value={rgbColor.g}
-                      onChange={(e) =>
-                        handleRgbChange(Number(e.target.value), "g")
-                      }
-                      w={gs}
-                    />
-                    <Text>,</Text>
-                    <UnstyledInput
-                      id="rgba-color-b"
-                      maxLength={3}
-                      value={rgbColor.b}
-                      onChange={(e) =>
-                        handleRgbChange(Number(e.target.value), "b")
-                      }
-                      w={bs}
-                    />
-                  </Flex>
-                </FormControl>
+                <RgbField rgbColor={rgbColor} onRgbChange={handleRgbChange} />
 
-                {/* remove this form control to prevent errors */}
-                <FormControl w={40}>
-                  <FormLabel fontSize={"small"} color={"gray.500"}>
-                    CMYK
-                  </FormLabel>
-                  <Flex>
-                    <UnstyledInput
-                      value={cmykColor.c}
-                      onChange={(e) =>
-                        handleCmykChange(Number(e.target.value), "c")
-                      }
-                      w={cs}
-                      maxLength={3}
-                    />
-                    <Text>,</Text>
-                    <UnstyledInput
-                      value={cmykColor.m}
-                      onChange={(e) =>
-                        handleCmykChange(Number(e.target.value), "m")
-                      }
-                      id="cmyk-color-m"
-                      w={ms}
-                      maxLength={3}
-                    />
-                    <Text>,</Text>
-                    <UnstyledInput
-                      value={cmykColor.y}
-                      onChange={(e) =>
-                        handleCmykChange(Number(e.target.value), "y")
-                      }
-                      id="cmyk-color-y"
-                      w={ys}
-                      maxLength={3}
-                    />
-                    <Text>,</Text>
-                    <UnstyledInput
-                      value={cmykColor.k}
-                      onChange={(e) =>
-                        handleCmykChange(Number(e.target.value), "k")
-                      }
-                      id="cmyk-color-k"
-                      w={ks}
-                      maxLength={3}
-                    />
-                  </Flex>
-                </FormControl>
+                <CmykField
+                  cmykColor={cmykColor}
+                  onCmykChange={handleCmykChange}
+                />
               </HStack>
             </Flex>
           </Box>
@@ -286,9 +210,7 @@ export function HomePage() {
               <RangeSlider
                 max={50}
                 min={2}
-                onChange={(value) => {
-                  setShadesCount(value);
-                }}
+                onChange={handleShadesCountChange}
                 value={shadesCount}
               >
                 <RangeSliderTrack bg="gray.100">
@@ -304,14 +226,33 @@ export function HomePage() {
           </Flex>
           <Flex flexWrap={"wrap"} mt={4} w={830} mx={"auto"}>
             {generateShades(baseColor, shadesCount[0]).map((shade, index) => (
-              <Box
-                bg={shade}
-                h={108}
+              <Link
+                as={RouterLink}
                 key={shade + "-" + index}
-                m={15}
-                rounded={"12px"}
-                width={108}
-              />
+                to={`color/${shade.replace("#", "")}`}
+              >
+                <Flex
+                  bg={shade}
+                  h={108}
+                  m={15}
+                  rounded={"12px"}
+                  width={108}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                  sx={{
+                    "&:hover": {
+                      button: {
+                        display: "flex",
+                        "&:active": {
+                          transform: "scale(0.9)",
+                        },
+                      },
+                    },
+                  }}
+                >
+                  <CopyColorButton color={shade} />
+                </Flex>
+              </Link>
             ))}
           </Flex>
         </Container>
