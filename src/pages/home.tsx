@@ -1,12 +1,4 @@
-import {
-  Box,
-  Container,
-  Flex,
-  HStack,
-  Heading,
-  Link,
-  Text,
-} from "@chakra-ui/react";
+import { Container, Flex, Heading } from "@chakra-ui/react";
 import chroma from "chroma-js";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -150,56 +142,36 @@ export function HomePage() {
   };
 
   return (
-    <Box minH={"100vh"}>
-      <Box>
-        <Flex
-          as="header"
-          justifyContent={"space-between"}
-          px={10}
-          h={14}
-          borderBottom={"1px"}
-          borderBottomColor={"gray.200"}
-        >
-          <Flex alignItems={"center"} gap={1}>
-            <Text>supa</Text>
-            <Text fontWeight={"semibold"}>colors</Text>
-          </Flex>
-          <HStack>
-            <Link>Sign in</Link>
-          </HStack>
-        </Flex>
-        <Container mt={10} maxW={"container.lg"} p={0}>
-          <BoxColorFields
-            baseColor={baseColor}
-            cmykColor={cmykColor}
-            hexColor={hexColor}
-            onCmykChange={handleCmykChange}
-            onHexChange={handleHexChange}
-            onRgbChange={handleRgbChange}
-            rgbColor={rgbColor}
-          />
+    <Container mt={10} maxW={"container.lg"} p={0}>
+      <BoxColorFields
+        baseColor={baseColor}
+        cmykColor={cmykColor}
+        hexColor={hexColor}
+        onCmykChange={handleCmykChange}
+        onHexChange={handleHexChange}
+        onRgbChange={handleRgbChange}
+        rgbColor={rgbColor}
+      />
 
-          <Flex
-            justifyContent={"space-between"}
-            alignItems={"center"}
-            w={800}
-            mx={"auto"}
-            mt={10}
-            mb={4}
-          >
-            <Heading size={"md"}>Shades</Heading>
-            <ShadesRange
-              count={shadesCount}
-              onShadesCountChange={handleShadesCountChange}
-            />
-          </Flex>
-          <Flex flexWrap={"wrap"} mt={4} w={830} mx={"auto"}>
-            {generateShades(baseColor, shadesCount[0]).map((shade, index) => (
-              <ColorBox color={shade} key={color + "-" + index} />
-            ))}
-          </Flex>
-        </Container>
-      </Box>
-    </Box>
+      <Flex
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        w={800}
+        mx={"auto"}
+        mt={10}
+        mb={4}
+      >
+        <Heading size={"md"}>Shades</Heading>
+        <ShadesRange
+          count={shadesCount}
+          onShadesCountChange={handleShadesCountChange}
+        />
+      </Flex>
+      <Flex flexWrap={"wrap"} mt={4} w={830} mx={"auto"}>
+        {generateShades(baseColor, shadesCount[0]).map((shade, index) => (
+          <ColorBox color={shade} key={color + "-" + index} />
+        ))}
+      </Flex>
+    </Container>
   );
 }
