@@ -1,12 +1,22 @@
-import { Container } from "@chakra-ui/react";
+import { Container, Flex, Heading } from "@chakra-ui/react";
+import { useParams } from "react-router-dom";
 
 export function ColorViewPage() {
+  const { color: rawColor } = useParams();
+  const color = `#${rawColor}`;
+
   return (
-    <Container>
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Obcaecati
-      quaerat nostrum possimus saepe ducimus ex pariatur porro similique
-      molestiae mollitia. Neque ut recusandae explicabo non. Et architecto
-      provident deserunt veniam?
+    <Container mt={10} maxW={"container.lg"}>
+      <Flex
+        h="80"
+        alignItems={"center"}
+        justifyContent={"center"}
+        rounded={"2xl"}
+        w="full"
+        bg={color}
+      >
+        <Heading>{color.toUpperCase()}</Heading>
+      </Flex>
     </Container>
   );
 }
