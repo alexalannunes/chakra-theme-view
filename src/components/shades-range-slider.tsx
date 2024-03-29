@@ -27,7 +27,7 @@ export function ShadesRangeSlider({
         <RangeSliderTrack bg="gray.100">
           <RangeSliderFilledTrack bg="gray.300" />
         </RangeSliderTrack>
-        <RangeSliderThumb boxSize={6} index={0}>
+        <RangeSliderThumb boxSize={8} index={0} shadow={"md"}>
           <Text fontSize={"small"} fontWeight={"semibold"}>
             {value[0]}
           </Text>
