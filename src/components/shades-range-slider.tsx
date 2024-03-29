@@ -7,26 +7,29 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-interface ShadesRangeProps {
-  count: number[];
+interface ShadesRangeSliderProps {
+  value: number[];
   onShadesCountChange: (value: number[]) => void;
 }
 
-export function ShadesRange({ count, onShadesCountChange }: ShadesRangeProps) {
+export function ShadesRangeSlider({
+  value,
+  onShadesCountChange,
+}: ShadesRangeSliderProps) {
   return (
     <Box w={96}>
       <RangeSlider
         max={50}
         min={2}
         onChange={onShadesCountChange}
-        value={count}
+        value={value}
       >
         <RangeSliderTrack bg="gray.100">
           <RangeSliderFilledTrack bg="gray.300" />
         </RangeSliderTrack>
         <RangeSliderThumb boxSize={6} index={0}>
           <Text fontSize={"small"} fontWeight={"semibold"}>
-            {count[0]}
+            {value[0]}
           </Text>
         </RangeSliderThumb>
       </RangeSlider>

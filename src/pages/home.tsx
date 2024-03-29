@@ -6,7 +6,7 @@ import { useDebouncedCallback } from "use-debounce";
 
 import { BoxColorFields } from "../features/color-manager/box-color-fields";
 import { ColorBox } from "../features/color-manager/color-box";
-import { ShadesRange } from "../features/color-manager/shades-range";
+import { ShadesRangeSlider } from "../components/shades-range-slider";
 import { generateShades } from "../utils-temp";
 
 const navigateOptions = {
@@ -162,8 +162,8 @@ export function HomePage() {
         mb={4}
       >
         <Heading size={"md"}>Shades</Heading>
-        <ShadesRange
-          count={shadesCount}
+        <ShadesRangeSlider
+          value={shadesCount}
           onShadesCountChange={handleShadesCountChange}
         />
       </Flex>
