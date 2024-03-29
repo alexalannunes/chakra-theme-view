@@ -71,7 +71,7 @@ export function HomePage() {
     });
 
     navigate(
-      s.replace("#", "").toLowerCase() + "-" + shadesCount[0],
+      "/" + s.replace("#", "").toLowerCase() + "-" + shadesCount[0],
       navigateOptions
     );
   };
@@ -95,7 +95,7 @@ export function HomePage() {
         k: Math.ceil(k * 100),
       });
 
-      navigate(v.toLowerCase() + "-" + shadesCount[0], navigateOptions);
+      navigate("/" + v.toLowerCase() + "-" + shadesCount[0], navigateOptions);
     }
   };
 
@@ -123,15 +123,15 @@ export function HomePage() {
     });
 
     navigate(
-      s.replace("#", "").toLowerCase() + "-" + shadesCount[0],
+      "/" + s.replace("#", "").toLowerCase() + "-" + shadesCount[0],
       navigateOptions
     );
   };
 
   // TODO: receive color and shade count to update url
   const updateUrlShadesCount = useDebouncedCallback((value: number) => {
-    const newColor = color?.replace("#", "").toLowerCase();
-    const url = `${newColor}-${value}`;
+    const newColor = (color || baseColor)?.replace("#", "").toLowerCase();
+    const url = `/${newColor}-${value}`;
 
     navigate(url, navigateOptions);
   }, 800);
