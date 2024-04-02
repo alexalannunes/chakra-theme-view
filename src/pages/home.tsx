@@ -1,9 +1,9 @@
-import { Container, Heading } from "@chakra-ui/react";
+import { Flex, Heading } from "@chakra-ui/react";
 
 export function HomePage() {
   return (
-    <Container mt={10} maxW={"container.lg"} p={0}>
-      <Heading>New home</Heading>
-    </Container>
+    <Flex minH={"100vh"}>
+      <Heading>New Project , now lets go</Heading>
+    </Flex>
   );
 }
