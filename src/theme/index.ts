@@ -3,7 +3,7 @@ import { defineStyleConfig } from "@chakra-ui/react";
 export const Button = defineStyleConfig({
   baseStyle: {
     fontWeight: "bold",
-    transition: "transform .1s ease-in",
+    transition: "transform .1s ease-in, background .2s ease-in",
     rounded: "xl",
     "&:active": {
       transform: "scale(0.96)",
