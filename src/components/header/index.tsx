@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { MdAdd } from "react-icons/md";
 
-export function Header() {
+export function Header({ onClickNew }: { onClickNew: () => void }) {
   return (
     <Box w={"full"} py={2} borderBottom={"1px"} borderBottomColor={"gray.100"}>
       <Container maxW={"container.lg"}>
@@ -21,7 +21,9 @@ export function Header() {
             </Heading>
           </HStack>
           <HStack gap={4}>
-            <Button leftIcon={<MdAdd />}>New</Button>
+            <Button onClick={onClickNew} leftIcon={<MdAdd />}>
+              New
+            </Button>
             <Avatar
               h={10}
               w={10}
