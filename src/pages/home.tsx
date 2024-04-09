@@ -2,9 +2,6 @@ import {
   Box,
   Button,
   Container,
-  Editable,
-  EditableInput,
-  EditablePreview,
   Flex,
   Grid,
   GridItem,
@@ -12,44 +9,22 @@ import {
   Icon,
   Stack,
   Text,
-  chakra,
   useToast,
 } from "@chakra-ui/react";
 import chroma from "chroma-js";
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import { BsStars } from "react-icons/bs";
-import {
-  MdCheck,
-  MdFavorite,
-  MdFavoriteBorder,
-  MdSettingsSuggest,
-} from "react-icons/md";
-import { useSearchParams } from "react-router-dom";
 import { useDebouncedCallback } from "use-debounce";
-import { Header } from "../components/header";
 
-const initialColors = [
-  {
-    id: 0,
-    color: "#48BB78",
-  },
-  {
-    id: 1,
-    color: "#4299e1",
-  },
-  {
-    id: 2,
-    color: "#0BC5EA",
-  },
-  {
-    id: 3,
-    color: "#F56565",
-  },
-  {
-    id: 4,
-    color: "#38B2AC",
-  },
-];
+import { Header } from "../components/header";
+import { initialColors } from "../features/home/initial-colors";
+import { IColor } from "../features/home/types/colors";
+import { ActionButtons } from "../features/home/ui/action-buttons";
+import { InputColor } from "../features/home/ui/color-input";
+import { ColorNameInput } from "../features/home/ui/color-name-input";
+import { CopiedToastContainer } from "../features/home/ui/copied-toast";
+import { useColors } from "../features/home/use-colors";
+import { useColorsNavigation } from "../features/home/use-colors-navigation";
 
 function ColorBoxContainer({ children }: { children: ReactNode }) {
   return (
@@ -59,43 +34,15 @@ function ColorBoxContainer({ children }: { children: ReactNode }) {
   );
 }
 
-const convertColorsToString = (
-  colors: Array<{ id: number; color: string }>
-) => {
-  const colorsString = colors
-    .map((c) => c.color.replace("#", "").toLowerCase())
-    .join("-");
-
-  return colorsString;
-};
-
-function useColors() {
-  const [params] = useSearchParams();
-  const colorsParams = params.get("colors");
-
-  const [colors, setColors] = useState(() => {
-    if (colorsParams) {
-      // validate colors
-      return colorsParams
-        .split("-")
-        .filter((c) => !!c)
-        .map((color, id) => ({
-          color: `#${color}`,
-          id,
-        }));
-    }
-
-    return initialColors;
-  });
-
-  return { colors, setColors };
-}
-
 export function HomePage() {
-  const [, setSearchParams] = useSearchParams();
+  const { updateColorUrl } = useColorsNavigation();
   const { colors, setColors } = useColors();
   const toast = useToast();
-  const [saved, setSaved] = useState(false);
+
+  // TODO
+  // const [viewMode, setViewMode] = useState<"color" | "shades" | "tints">(
+  //   "color"
+  // );
 
   const handleCopy = async (value: string) => {
     await navigator.clipboard.writeText(value);
@@ -108,48 +55,26 @@ export function HomePage() {
         alignItems: "center",
         justifyContent: "center",
       },
-      render: ({ onClose }) => (
-        <Flex
-          gap={2}
-          alignItems={"center"}
-          justifyContent={"center"}
-          p={3}
-          bg={"gray.700"}
-          fontWeight={"bold"}
-          color={"white"}
-          rounded={"full"}
-          w={40}
-          onClick={onClose}
-          cursor={"pointer"}
-        >
-          <MdCheck />
-          Copied!
-        </Flex>
-      ),
+      render: CopiedToastContainer,
     });
   };
 
-  const updateUrlWithColors = useDebouncedCallback((newColors: string) => {
-    setSearchParams(
-      {
-        colors: newColors,
-      },
-      {
-        replace: true,
-      }
-    );
-  }, 800);
+  const debouncedUpdateUrlColors = useDebouncedCallback(
+    (newColors: IColor[]) => {
+      updateColorUrl(newColors);
+    },
+    800
+  );
 
   const handleNewColors = () => {
-    // set name
-
+    // TODO: set name
     setColors(initialColors);
-    const urlColors = convertColorsToString(initialColors);
-
-    updateUrlWithColors(urlColors);
+    debouncedUpdateUrlColors(initialColors);
   };
 
+  // TODO: prepare to mobile
   const templateGrid = `repeat(${colors.length}, 1fr)`;
+
   return (
     <Box minH={"100vh"}>
       <Header onClickNew={handleNewColors} />
@@ -161,24 +86,10 @@ export function HomePage() {
             </Text>
             <HStack>
               <Icon as={BsStars} color="cyan.400" />
-              <Editable defaultValue="Color name" fontSize={"xl"}>
-                <EditablePreview fontWeight={"bold"} />
-                <EditableInput fontWeight={"bold"} />
-              </Editable>
+              <ColorNameInput />
             </HStack>
           </Stack>
-          <HStack>
-            <Button variant={"preLarge"} leftIcon={<MdSettingsSuggest />}>
-              Adjust
-            </Button>
-            <Button
-              variant={"preLarge"}
-              leftIcon={saved ? <MdFavorite /> : <MdFavoriteBorder />}
-              onClick={() => setSaved(!saved)}
-            >
-              Saved
-            </Button>
-          </HStack>
+          <ActionButtons />
         </Flex>
         <Grid templateColumns={templateGrid} gap={6}>
           {colors.map(({ color, id }) => {
@@ -186,49 +97,36 @@ export function HomePage() {
             return (
               <GridItem key={id}>
                 <ColorBoxContainer>
-                  <Box
-                    rounded={"2xl"}
-                    w="100%"
-                    h={80}
-                    bg={color}
-                    boxShadow={"0 10px 18px 0 " + chroma(color).luminance(0.7)}
-                  />
+                  {/* TODO: color view mode */}
+                  <Box h={80} w="100%">
+                    <Box
+                      rounded={"2xl"}
+                      bg={color}
+                      h="full"
+                      boxShadow={
+                        "0 10px 18px 0 " + chroma(color).luminance(0.7)
+                      }
+                    />
+                  </Box>
 
-                  <chakra.input
-                    type="color"
-                    mt={10}
-                    rounded={"full"}
-                    sx={{
-                      "::-webkit-color-swatch-wrapper": {
-                        padding: 0,
-                        h: 12,
-                        w: 12,
-                      },
-                      "::-webkit-color-swatch": {
-                        rounded: "full",
-                        border: "4px",
-                        borderColor: chroma(color).luminance(0.6).hex(),
-                      },
-                    }}
-                    value={color}
-                    onChange={(e) => {
+                  <InputColor
+                    color={color}
+                    onChange={(color) => {
                       const updatedColors = colors.map((item) => {
                         if (item.id === id) {
                           return {
                             ...item,
-                            color: e.target.value,
+                            color,
                           };
                         }
                         return item;
                       });
 
                       setColors(updatedColors);
-
-                      const urlColors = convertColorsToString(updatedColors);
-
-                      updateUrlWithColors(urlColors);
+                      debouncedUpdateUrlColors(updatedColors);
                     }}
                   />
+
                   <Button
                     fontWeight={"semibold"}
                     variant={"ghost"}
