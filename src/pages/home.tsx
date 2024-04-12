@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Container,
   Flex,
   Grid,
@@ -11,8 +10,6 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import chroma from "chroma-js";
-import { ReactNode } from "react";
 import { BsStars } from "react-icons/bs";
 import { useDebouncedCallback } from "use-debounce";
 
@@ -20,19 +17,11 @@ import { Header } from "../components/header";
 import { initialColors } from "../features/home/initial-colors";
 import { IColor } from "../features/home/types/colors";
 import { ActionButtons } from "../features/home/ui/action-buttons";
-import { InputColor } from "../features/home/ui/color-input";
+import { ColorBox } from "../features/home/ui/color-box";
 import { ColorNameInput } from "../features/home/ui/color-name-input";
 import { CopiedToastContainer } from "../features/home/ui/copied-toast";
 import { useColors } from "../features/home/use-colors";
 import { useColorsNavigation } from "../features/home/use-colors-navigation";
-
-function ColorBoxContainer({ children }: { children: ReactNode }) {
-  return (
-    <Stack alignItems={"center"} spacing={0}>
-      {children}
-    </Stack>
-  );
-}
 
 export function HomePage() {
   const { updateColorUrl } = useColorsNavigation();
@@ -72,6 +61,21 @@ export function HomePage() {
     debouncedUpdateUrlColors(initialColors);
   };
 
+  const handleChangeColor = (colorObj: IColor) => {
+    const updatedColors = colors.map((item) => {
+      if (item.id === colorObj.id) {
+        return {
+          ...item,
+          color: colorObj.color,
+        };
+      }
+      return item;
+    });
+
+    setColors(updatedColors);
+    debouncedUpdateUrlColors(updatedColors);
+  };
+
   // TODO: prepare to mobile
   const templateGrid = `repeat(${colors.length}, 1fr)`;
 
@@ -93,58 +97,14 @@ export function HomePage() {
         </Flex>
         <Grid templateColumns={templateGrid} gap={6}>
           {colors.map(({ color, id }) => {
-            const rgbColor = `rgb(${chroma(color).rgb().join(", ")})`;
             return (
               <GridItem key={id}>
-                <ColorBoxContainer>
-                  {/* TODO: color view mode */}
-                  <Box h={80} w="100%">
-                    <Box
-                      rounded={"2xl"}
-                      bg={color}
-                      h="full"
-                      boxShadow={
-                        "0 10px 18px 0 " + chroma(color).luminance(0.7)
-                      }
-                    />
-                  </Box>
-
-                  <InputColor
-                    color={color}
-                    onChange={(color) => {
-                      const updatedColors = colors.map((item) => {
-                        if (item.id === id) {
-                          return {
-                            ...item,
-                            color,
-                          };
-                        }
-                        return item;
-                      });
-
-                      setColors(updatedColors);
-                      debouncedUpdateUrlColors(updatedColors);
-                    }}
-                  />
-
-                  <Button
-                    fontWeight={"semibold"}
-                    variant={"ghost"}
-                    color={"gray.500"}
-                    mt={4}
-                    onClick={() => handleCopy(color)}
-                  >
-                    {color.toUpperCase()}
-                  </Button>
-                  <Button
-                    size={"sm"}
-                    variant={"ghost"}
-                    onClick={() => handleCopy(rgbColor)}
-                    color={"gray.400"}
-                  >
-                    {rgbColor}
-                  </Button>
-                </ColorBoxContainer>
+                <ColorBox
+                  color={color}
+                  id={id}
+                  onChangeColor={handleChangeColor}
+                  onCopy={handleCopy}
+                />
               </GridItem>
             );
           })}
