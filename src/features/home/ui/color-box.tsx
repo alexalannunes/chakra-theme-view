@@ -4,13 +4,8 @@ import chroma from "chroma-js";
 
 import { IColor } from "../types/colors";
 import { InputColor } from "./color-input";
-
-function getContrastTextColor(color: string) {
-  const whiteContrast = chroma.contrast(color, "white");
-  const blackContrast = chroma.contrast(color, "black");
-
-  return whiteContrast >= blackContrast ? "white" : "black";
-}
+import { ColorMode } from "../types/color-mode";
+import { getContrastTextColor } from "../helpers";
 
 interface ColorBoxContainerProps {
   children: ReactNode;
@@ -41,8 +36,9 @@ function ColorView({ color }: ColorViewProps) {
 
 interface ColorBoxProps {
   color: string;
-  onChangeColor: (color: IColor) => void;
+  colorMode: ColorMode;
   id: number;
+  onChangeColor: (color: IColor) => void;
   onCopy: (content: string) => void;
 }
 
@@ -110,14 +106,23 @@ function ShadesView({ color }: ShadesViewProps) {
   );
 }
 
-export function ColorBox({ color, id, onChangeColor, onCopy }: ColorBoxProps) {
+export function ColorBox({
+  color,
+  id,
+  onChangeColor,
+  onCopy,
+  colorMode,
+}: ColorBoxProps) {
   const rgbColor = `rgb(${chroma(color).rgb().join(", ")})`;
 
   return (
     <ColorBoxContainer>
       <Box h={80} w="100%">
-        {/* <ColorView color={color} /> */}
-        <ShadesView color={color} />
+        {colorMode === "shades" ? (
+          <ShadesView color={color} />
+        ) : (
+          <ColorView color={color} />
+        )}
       </Box>
 
       <InputColor

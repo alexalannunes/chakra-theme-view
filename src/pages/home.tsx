@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { BsStars } from "react-icons/bs";
 import { useDebouncedCallback } from "use-debounce";
+import { useState } from "react";
 
 import { Header } from "../components/header";
 import { initialColors } from "../features/home/initial-colors";
@@ -22,16 +23,14 @@ import { ColorNameInput } from "../features/home/ui/color-name-input";
 import { CopiedToastContainer } from "../features/home/ui/copied-toast";
 import { useColors } from "../features/home/use-colors";
 import { useColorsNavigation } from "../features/home/use-colors-navigation";
+import { ColorMode } from "../features/home/types/color-mode";
 
 export function HomePage() {
   const { updateColorUrl } = useColorsNavigation();
   const { colors, setColors } = useColors();
   const toast = useToast();
 
-  // TODO
-  // const [viewMode, setViewMode] = useState<"color" | "shades" | "tints">(
-  //   "color"
-  // );
+  const [colorMode, setColorMode] = useState<ColorMode>("color");
 
   const handleCopy = async (value: string) => {
     await navigator.clipboard.writeText(value);
@@ -76,6 +75,10 @@ export function HomePage() {
     debouncedUpdateUrlColors(updatedColors);
   };
 
+  const handleToggleColorMode = () => {
+    setColorMode(colorMode === "color" ? "shades" : "color");
+  };
+
   // TODO: prepare to mobile
   const templateGrid = `repeat(${colors.length}, 1fr)`;
 
@@ -93,7 +96,10 @@ export function HomePage() {
               <ColorNameInput />
             </HStack>
           </Stack>
-          <ActionButtons />
+          <ActionButtons
+            onToggleColorMode={handleToggleColorMode}
+            colorMode={colorMode}
+          />
         </Flex>
         <Grid templateColumns={templateGrid} gap={6}>
           {colors.map(({ color, id }) => {
@@ -104,6 +110,7 @@ export function HomePage() {
                   id={id}
                   onChangeColor={handleChangeColor}
                   onCopy={handleCopy}
+                  colorMode={colorMode}
                 />
               </GridItem>
             );
