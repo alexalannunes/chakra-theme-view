@@ -1,43 +1,41 @@
 import {
+  Box,
   Button,
-  HStack,
-  Text,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
   FormControl,
   FormLabel,
-  useDisclosure,
-  Box,
+  HStack,
   Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Stack,
+  Text,
   Textarea,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { MdFavoriteBorder, MdMenu, MdNotes } from "react-icons/md";
 import { useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { MdFavorite, MdFavoriteBorder, MdMenu, MdNotes } from "react-icons/md";
+import { useLocalStorage } from "usehooks-ts";
 
 import { ColorMode } from "../types/color-mode";
-import { toSlug } from "../helpers";
-import { IColor } from "../types/colors";
 import { IPalette } from "../types/palette";
+import { useSearchParams } from "react-router-dom";
 
 interface SavePaletteForm extends Omit<IPalette, "id"> {}
 
 interface ActionButtonsProps {
   onToggleColorMode: () => void;
   colorMode: ColorMode;
-  colors: IColor[];
 }
 
 export function ActionButtons({
   onToggleColorMode,
   colorMode,
-  colors,
 }: ActionButtonsProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -54,6 +52,17 @@ export function ActionButtons({
 
   const paletteNameRef = useRef<HTMLInputElement>(null);
 
+  const [localColors, setLocalColors] = useLocalStorage<IPalette[]>(
+    "palettes",
+    []
+  );
+
+  const [params] = useSearchParams();
+
+  const colors = params.get("colors");
+
+  const isSaved = localColors.find((color) => color.id === colors);
+
   const isColorViewMode = colorMode === "color";
   const buttonText = isColorViewMode ? "View Shades" : "View Colors";
   const buttonIcon = isColorViewMode ? (
@@ -64,13 +73,25 @@ export function ActionButtons({
     </Text>
   );
 
-  const placeholderDescription = colors
-    .map(({ color }) => color.replace("#", ""))
-    .join("-");
+  const placeholderDescription = colors;
 
   const submit = (data: SavePaletteForm) => {
-    const colorPaletteId = placeholderDescription;
-    console.log(data, toSlug(data.name), colorPaletteId);
+    if (placeholderDescription) {
+      const { name, description } = data;
+      const paletteName = name.trim();
+      const paletteDescription = description.trim();
+      const paletteId = placeholderDescription;
+
+      const toSave: IPalette = {
+        name: paletteName,
+        description: paletteDescription,
+        id: paletteId,
+      };
+
+      // TODO check if exist, to update
+      setLocalColors((prev) => [...prev, toSave]);
+      onClose();
+    }
   };
 
   return (
@@ -86,9 +107,9 @@ export function ActionButtons({
         <Button
           onClick={onOpen}
           variant={"preLarge"}
-          leftIcon={<MdFavoriteBorder />}
+          leftIcon={isSaved ? <MdFavorite /> : <MdFavoriteBorder />}
         >
-          Save
+          {isSaved ? "Saved" : "Save"}
         </Button>
       </HStack>
       <Modal
@@ -138,7 +159,10 @@ export function ActionButtons({
                         {...field}
                         maxLength={256}
                         autoComplete="off"
-                        placeholder={placeholderDescription}
+                        placeholder={
+                          placeholderDescription ??
+                          "Super color palette description"
+                        }
                       />
                     )}
                   />

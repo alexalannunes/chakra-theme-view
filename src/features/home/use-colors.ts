@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { initialColors } from "./initial-colors";
+import { useColorsNavigation } from "./use-colors-navigation";
 
 export function useColors() {
   const [params] = useSearchParams();
+  const { updateColorUrl } = useColorsNavigation();
   const colorsParams = params.get("colors");
 
   const [colors, setColors] = useState(() => {
@@ -21,6 +23,12 @@ export function useColors() {
 
     return initialColors;
   });
+
+  useEffect(() => {
+    if (!colorsParams) {
+      updateColorUrl(initialColors);
+    }
+  }, [colorsParams, updateColorUrl]);
 
   return { colors, setColors };
 }

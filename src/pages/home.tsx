@@ -9,19 +9,40 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
+import { useState } from "react";
 import { BsStars } from "react-icons/bs";
 import { useDebouncedCallback } from "use-debounce";
-import { useState } from "react";
+import { useReadLocalStorage } from "usehooks-ts";
+import { useSearchParams } from "react-router-dom";
 
 import { Header } from "../components/header";
 import { initialColors } from "../features/home/initial-colors";
+import { ColorMode } from "../features/home/types/color-mode";
 import { IColor } from "../features/home/types/colors";
 import { ActionButtons } from "../features/home/ui/action-buttons";
 import { ColorBox } from "../features/home/ui/color-box";
 import { CopiedToastContainer } from "../features/home/ui/copied-toast";
 import { useColors } from "../features/home/use-colors";
 import { useColorsNavigation } from "../features/home/use-colors-navigation";
-import { ColorMode } from "../features/home/types/color-mode";
+import { IPalette } from "../features/home/types/palette";
+
+function ColorPaletteName() {
+  // TODO validate if key does not exist
+  const localColors = useReadLocalStorage<IPalette[]>("palettes");
+
+  const [params] = useSearchParams();
+
+  const colors = params.get("colors");
+
+  const savedColor = localColors?.find((color) => color.id === colors);
+
+  return (
+    <Text fontSize={"large"} fontWeight={"bold"} color={"gray.600"}>
+      {/* TODO put color name here */}
+      {savedColor?.name ?? "Color Palette"}
+    </Text>
+  );
+}
 
 export function HomePage() {
   const { updateColorUrl } = useColorsNavigation();
@@ -87,13 +108,10 @@ export function HomePage() {
         <Flex alignItems={"align"} justifyContent={"space-between"} my={8}>
           <HStack>
             <Icon as={BsStars} color="cyan.400" />
-            <Text fontSize={"large"} fontWeight={"bold"} color={"gray.600"}>
-              Color Palette
-            </Text>
+            <ColorPaletteName />
           </HStack>
           <ActionButtons
             colorMode={colorMode}
-            colors={colors}
             onToggleColorMode={handleToggleColorMode}
           />
         </Flex>

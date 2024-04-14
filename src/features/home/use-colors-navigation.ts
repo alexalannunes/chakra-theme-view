@@ -6,6 +6,7 @@ import { toSlashColors } from "./helpers";
 export function useColorsNavigation() {
   const [colorsParams, setColorsParams] = useSearchParams();
 
+  // TODO put debounce here
   const updateColorUrl = (colors: IColor[]) => {
     const slashColors = toSlashColors(colors);
     setColorsParams(
