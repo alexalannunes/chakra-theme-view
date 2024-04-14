@@ -6,8 +6,9 @@ import {
   Flex,
   HStack,
   Heading,
+  Tooltip,
 } from "@chakra-ui/react";
-import { MdAdd } from "react-icons/md";
+import { MdAdd, MdFavorite } from "react-icons/md";
 
 export function Header({ onClickNew }: { onClickNew: () => void }) {
   return (
@@ -21,15 +22,20 @@ export function Header({ onClickNew }: { onClickNew: () => void }) {
             </Heading>
           </HStack>
           <HStack gap={4}>
+            <Button onClick={onClickNew} leftIcon={<MdFavorite />}>
+              Saved
+            </Button>
             <Button onClick={onClickNew} leftIcon={<MdAdd />}>
               New
             </Button>
-            <Avatar
-              h={10}
-              w={10}
-              src="http://github.com/alexalannunes.png"
-              name="me"
-            />
+            <Tooltip hasArrow label="Soon">
+              <Avatar
+                h={10}
+                w={10}
+                src="http://github.com/alexalannunes.png"
+                name="me"
+              />
+            </Tooltip>
           </HStack>
         </Flex>
       </Container>

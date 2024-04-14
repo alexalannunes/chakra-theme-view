@@ -6,7 +6,6 @@ import {
   GridItem,
   HStack,
   Icon,
-  Stack,
   Text,
   useToast,
 } from "@chakra-ui/react";
@@ -19,7 +18,6 @@ import { initialColors } from "../features/home/initial-colors";
 import { IColor } from "../features/home/types/colors";
 import { ActionButtons } from "../features/home/ui/action-buttons";
 import { ColorBox } from "../features/home/ui/color-box";
-import { ColorNameInput } from "../features/home/ui/color-name-input";
 import { CopiedToastContainer } from "../features/home/ui/copied-toast";
 import { useColors } from "../features/home/use-colors";
 import { useColorsNavigation } from "../features/home/use-colors-navigation";
@@ -86,19 +84,17 @@ export function HomePage() {
     <Box minH={"100vh"}>
       <Header onClickNew={handleNewColors} />
       <Container maxW={"container.lg"} pt={10}>
-        <Flex alignItems={"flex-end"} justifyContent={"space-between"} my={8}>
-          <Stack spacing={0}>
-            <Text fontSize={"small"} fontWeight={"bold"} color={"gray.400"}>
+        <Flex alignItems={"align"} justifyContent={"space-between"} my={8}>
+          <HStack>
+            <Icon as={BsStars} color="cyan.400" />
+            <Text fontSize={"large"} fontWeight={"bold"} color={"gray.600"}>
               Color Palette
             </Text>
-            <HStack>
-              <Icon as={BsStars} color="cyan.400" />
-              <ColorNameInput />
-            </HStack>
-          </Stack>
+          </HStack>
           <ActionButtons
-            onToggleColorMode={handleToggleColorMode}
             colorMode={colorMode}
+            colors={colors}
+            onToggleColorMode={handleToggleColorMode}
           />
         </Flex>
         <Grid templateColumns={templateGrid} gap={6}>
