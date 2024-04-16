@@ -42,7 +42,13 @@ interface ColorBoxProps {
   onCopy: (content: string) => void;
 }
 
-function ShadeViewColor({ color }: { color: string }) {
+function ShadeViewColor({
+  color,
+  onCopy,
+}: {
+  color: string;
+  onCopy: (color: string) => void;
+}) {
   const textColor = getContrastTextColor(color);
 
   return (
@@ -59,6 +65,8 @@ function ShadeViewColor({ color }: { color: string }) {
       }}
       flex={1}
       bg={color}
+      cursor={"pointer"}
+      onClick={() => onCopy(color)}
     >
       <Text fontSize={"small"} fontWeight={"semibold"} color={textColor}>
         {color.toUpperCase()}
@@ -67,9 +75,11 @@ function ShadeViewColor({ color }: { color: string }) {
   );
 }
 
-interface ShadesViewProps extends ColorViewProps {}
+interface ShadesViewProps extends ColorViewProps {
+  onCopy: (color: string) => void;
+}
 
-function ShadesView({ color }: ShadesViewProps) {
+function ShadesView({ color, onCopy }: ShadesViewProps) {
   const colors: string[] = [4, 3, 2, 1].map((s) => {
     const colorShade = chroma(color)
       .brighten(s * 0.5)
@@ -100,7 +110,7 @@ function ShadesView({ color }: ShadesViewProps) {
       boxShadow={"0 10px 18px 0 " + chroma(color).luminance(0.7)}
     >
       {colors.map((c, index) => (
-        <ShadeViewColor key={color + index} color={c} />
+        <ShadeViewColor onCopy={onCopy} key={color + index} color={c} />
       ))}
     </Flex>
   );
@@ -119,7 +129,7 @@ export function ColorBox({
     <ColorBoxContainer>
       <Box h={80} w="100%">
         {colorMode === "shades" ? (
-          <ShadesView color={color} />
+          <ShadesView onCopy={onCopy} color={color} />
         ) : (
           <ColorView color={color} />
         )}
