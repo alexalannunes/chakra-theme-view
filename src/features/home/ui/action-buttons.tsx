@@ -126,7 +126,7 @@ export function ActionButtons({
             <ModalCloseButton />
             <ModalBody>
               <Stack spacing={6}>
-                <FormControl>
+                <FormControl isRequired>
                   <FormLabel>Palette name</FormLabel>
 
                   <Controller
@@ -148,12 +148,15 @@ export function ActionButtons({
                   />
                 </FormControl>
 
-                <FormControl>
+                <FormControl isRequired>
                   <FormLabel>Description</FormLabel>
 
                   <Controller
                     name="description"
                     control={control}
+                    rules={{
+                      required: true,
+                    }}
                     render={({ field }) => (
                       <Textarea
                         {...field}
