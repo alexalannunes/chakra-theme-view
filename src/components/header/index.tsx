@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Button,
   Container,
@@ -22,20 +21,22 @@ export function Header({ onClickNew }: { onClickNew: () => void }) {
             </Heading>
           </HStack>
           <HStack gap={4}>
-            <Button onClick={onClickNew} leftIcon={<MdFavorite />}>
-              Saved
-            </Button>
+            <Tooltip hasArrow label="Soon">
+              <Button onClick={onClickNew} leftIcon={<MdFavorite />}>
+                Saved
+              </Button>
+            </Tooltip>
             <Button onClick={onClickNew} leftIcon={<MdAdd />}>
               New
             </Button>
-            <Tooltip hasArrow label="Soon">
+            {/* <Tooltip hasArrow label="Soon">
               <Avatar
                 h={10}
                 w={10}
                 src="http://github.com/alexalannunes.png"
                 name="me"
               />
-            </Tooltip>
+            </Tooltip> */}
           </HStack>
         </Flex>
       </Container>

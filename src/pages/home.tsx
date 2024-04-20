@@ -38,7 +38,6 @@ function ColorPaletteName() {
 
   return (
     <Text fontSize={"large"} fontWeight={"bold"} color={"gray.600"}>
-      {/* TODO put color name here */}
       {savedColor?.name ?? "Color Palette"}
     </Text>
   );
@@ -74,7 +73,6 @@ export function HomePage() {
   );
 
   const handleNewColors = () => {
-    // TODO: set name
     setColors(initialColors);
     debouncedUpdateUrlColors(initialColors);
   };
