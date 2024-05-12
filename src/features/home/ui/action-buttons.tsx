@@ -148,15 +148,12 @@ export function ActionButtons({
                   />
                 </FormControl>
 
-                <FormControl isRequired>
+                <FormControl>
                   <FormLabel>Description</FormLabel>
 
                   <Controller
                     name="description"
                     control={control}
-                    rules={{
-                      required: true,
-                    }}
                     render={({ field }) => (
                       <Textarea
                         {...field}
