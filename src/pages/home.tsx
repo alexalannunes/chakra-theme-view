@@ -27,7 +27,6 @@ import { useColorsNavigation } from "../features/home/use-colors-navigation";
 import { IPalette } from "../features/home/types/palette";
 
 function ColorPaletteName() {
-  // TODO validate if key does not exist
   const localColors = useReadLocalStorage<IPalette[]>("palettes");
 
   const [params] = useSearchParams();
