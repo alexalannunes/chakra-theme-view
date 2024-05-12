@@ -5,30 +5,42 @@ import {
   Flex,
   HStack,
   Heading,
-  Tooltip,
 } from "@chakra-ui/react";
 import { MdAdd, MdFavorite } from "react-icons/md";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export function Header({ onClickNew }: { onClickNew: () => void }) {
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  const handleGoToSaved = () => {
+    navigate("/saved");
+  };
+
+  const hiddenPaths = ["/saved"];
+  const displayButtons = !hiddenPaths.includes(pathname);
+
   return (
-    <Box w={"full"} py={2} borderBottom={"1px"} borderBottomColor={"gray.100"}>
+    <Box w={"full"} borderBottom={"1px"} borderBottomColor={"gray.100"}>
       <Container maxW={"container.lg"}>
-        <Flex alignItems={"center"} justifyContent={"space-between"}>
+        <Flex alignItems={"center"} justifyContent={"space-between"} h={14}>
           <HStack>
             <Box h={6} w={6} bg="cyan.300" rounded={"full"} />
             <Heading as="h4" size="md">
-              Supa Colors
+              <Link to={"/"}>Supa Colors</Link>
             </Heading>
           </HStack>
           <HStack gap={4}>
-            <Tooltip hasArrow label="Soon">
-              <Button onClick={onClickNew} leftIcon={<MdFavorite />}>
-                Saved
-              </Button>
-            </Tooltip>
-            <Button onClick={onClickNew} leftIcon={<MdAdd />}>
-              New
-            </Button>
+            {displayButtons && (
+              <>
+                <Button onClick={handleGoToSaved} leftIcon={<MdFavorite />}>
+                  Saved
+                </Button>
+                <Button onClick={onClickNew} leftIcon={<MdAdd />}>
+                  New
+                </Button>
+              </>
+            )}
             {/* <Tooltip hasArrow label="Soon">
               <Avatar
                 h={10}
