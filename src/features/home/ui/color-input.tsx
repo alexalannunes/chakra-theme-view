@@ -11,11 +11,11 @@ export function InputColor({ color, onChange }: InputColorProps) {
       type="color"
       mt={10}
       rounded={"full"}
+      h={12}
+      w={12}
       sx={{
         "::-webkit-color-swatch-wrapper": {
           padding: 0,
-          h: 12,
-          w: 12,
         },
         "::-webkit-color-swatch": {
           rounded: "full",

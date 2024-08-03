@@ -47,6 +47,7 @@ export function ActionButtons({
   } = useForm<SavePaletteForm>({
     defaultValues: {
       name: "",
+      description: "",
     },
   });
 
@@ -79,7 +80,7 @@ export function ActionButtons({
     if (placeholderDescription) {
       const { name, description } = data;
       const paletteName = name.trim();
-      const paletteDescription = description.trim();
+      const paletteDescription = description?.trim();
       const paletteId = placeholderDescription;
 
       const toSave: IPalette = {
