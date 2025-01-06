@@ -1,4 +1,11 @@
-import { Box, Button, Flex, Stack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Stack,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { ReactNode } from "react";
 import chroma from "chroma-js";
 
@@ -23,15 +30,16 @@ interface ColorViewProps {
   color: string;
 }
 
+function useShadowBoxColor(color: string) {
+  const shadowOnLightMode = "0 10px 18px 0 " + chroma(color).luminance(0.7);
+  const shadowOnDarkMode = "none";
+  const shadow = useColorModeValue(shadowOnLightMode, shadowOnDarkMode);
+  return shadow;
+}
+
 function ColorView({ color }: ColorViewProps) {
-  return (
-    <Box
-      rounded={"2xl"}
-      bg={color}
-      h="full"
-      boxShadow={"0 10px 18px 0 " + chroma(color).luminance(0.7)}
-    />
-  );
+  const shadow = useShadowBoxColor(color);
+  return <Box rounded={"2xl"} bg={color} h="full" boxShadow={shadow} />;
 }
 
 interface ColorBoxProps {
@@ -80,6 +88,9 @@ interface ShadesViewProps extends ColorViewProps {
 }
 
 function ShadesView({ color, onCopy }: ShadesViewProps) {
+  const shadow = useShadowBoxColor(color);
+
+  // create the light colors
   const colors: string[] = [4, 3, 2, 1].map((s) => {
     const colorShade = chroma(color)
       .brighten(s * 0.5)
@@ -91,7 +102,8 @@ function ShadesView({ color, onCopy }: ShadesViewProps) {
   // current color
   colors.push(color);
 
-  const rest = [6, 7, 8, 9].map((s) => {
+  // create the dark colors
+  const darkColors = [6, 7, 8, 9].map((s) => {
     const colorShade = chroma(color)
       .darken((s - 5) * 0.5)
       .hex();
@@ -99,7 +111,7 @@ function ShadesView({ color, onCopy }: ShadesViewProps) {
     return colorShade;
   });
 
-  colors.push(...rest);
+  colors.push(...darkColors);
 
   return (
     <Flex
@@ -107,7 +119,7 @@ function ShadesView({ color, onCopy }: ShadesViewProps) {
       rounded={"2xl"}
       h="full"
       bg="red.100"
-      boxShadow={"0 10px 18px 0 " + chroma(color).luminance(0.7)}
+      boxShadow={shadow}
     >
       {colors.map((c, index) => (
         <ShadeViewColor onCopy={onCopy} key={color + index} color={c} />
