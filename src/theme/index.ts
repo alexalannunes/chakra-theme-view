@@ -10,16 +10,4 @@ export const Button = defineStyleConfig({
       transform: "scale(var(--pressed-effect))",
     },
   },
-  variants: {
-    preLarge: {
-      py: 6,
-      bg: "gray.100",
-      "&:active": {
-        "--pressed-effect": 0.9,
-      },
-      "&:hover": {
-        transform: "scale(var(--pressed-effect))",
-      },
-    },
-  },
 });

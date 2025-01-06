@@ -98,16 +98,11 @@ export function ActionButtons({
   return (
     <>
       <HStack>
-        <Button
-          variant={"preLarge"}
-          leftIcon={buttonIcon}
-          onClick={() => onToggleColorMode()}
-        >
+        <Button leftIcon={buttonIcon} onClick={() => onToggleColorMode()}>
           {buttonText}
         </Button>
         <Button
           onClick={onOpen}
-          variant={"preLarge"}
           leftIcon={isSaved ? <MdFavorite /> : <MdFavoriteBorder />}
         >
           {isSaved ? "Saved" : "Save"}
