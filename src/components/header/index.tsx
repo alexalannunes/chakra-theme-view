@@ -5,13 +5,16 @@ import {
   Flex,
   HStack,
   Heading,
+  IconButton,
+  useColorMode,
 } from "@chakra-ui/react";
-import { MdAdd, MdFavorite } from "react-icons/md";
+import { MdAdd, MdDarkMode, MdFavorite, MdLightMode } from "react-icons/md";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export function Header({ onClickNew }: { onClickNew: () => void }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   const handleGoToSaved = () => {
     navigate("/saved");
@@ -19,6 +22,8 @@ export function Header({ onClickNew }: { onClickNew: () => void }) {
 
   const hiddenPaths = ["/saved"];
   const displayButtons = !hiddenPaths.includes(pathname);
+
+  const colorModeIcon = colorMode === "dark" ? <MdLightMode /> : <MdDarkMode />;
 
   return (
     <Box w={"full"} borderBottom={"1px"} borderBottomColor={"gray.100"}>
@@ -41,14 +46,11 @@ export function Header({ onClickNew }: { onClickNew: () => void }) {
                 </Button>
               </>
             )}
-            {/* <Tooltip hasArrow label="Soon">
-              <Avatar
-                h={10}
-                w={10}
-                src="http://github.com/alexalannunes.png"
-                name="me"
-              />
-            </Tooltip> */}
+            <IconButton
+              onClick={toggleColorMode}
+              aria-label="Toggle theme"
+              icon={colorModeIcon}
+            />
           </HStack>
         </Flex>
       </Container>
